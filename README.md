@@ -28,6 +28,6 @@
 
 #### 使用方法
 
-1、下载单个视频：在 ```YoutubeVideoDownloader/YoutubeVideoDownloader``` 目录下使用 ```scrapy crawl download -a target=play_url``` ，例如 ```scrapy crawl download -a target target=https://www.youtube.com/watch?v=O7KaDi_Po-g```
+1、下载单个视频：在 ```YoutubeVideoDownloader/YoutubeVideoDownloader``` 目录下使用 ```scrapy crawl download -a target=play_url``` ，例如 ```scrapy crawl download -a target=https://www.youtube.com/watch?v=O7KaDi_Po-g```
 
-2、批量下载播放列表中的视频：在 ```YoutubeVideoDownloader/YoutubeVideoDownloader``` 目录下使用 ```scrapy crawl download -a target=playlist_url``` ，例如 ```scrapy crawl download -a target target=https://www.youtube.com/watch?v=O7KaDi_Po-g&list=PU2XZEtXCC8kXzN4RbFcMLFw```
+2、批量下载播放列表中的视频：在 ```YoutubeVideoDownloader/YoutubeVideoDownloader``` 目录下使用 ```scrapy crawl download -a target=playlist_url``` ，例如 ```scrapy crawl download -a target=https://www.youtube.com/watch?v=O7KaDi_Po-g&list=PU2XZEtXCC8kXzN4RbFcMLFw```
