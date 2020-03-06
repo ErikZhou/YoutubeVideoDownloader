@@ -12,8 +12,10 @@ import re
 import urllib
 import socket
 import socks
+from configparser import ConfigParser
 
 import scrapy
+import re, datetime
 
 from YoutubeVideoDownloader.ProgressBar import ProgressBar
 from YoutubeVideoDownloader.util.CommonUtils import *
@@ -29,8 +31,37 @@ class DownloadSpider(scrapy.Spider):
     # 播放列表
     target = []
     play_url = ''
+    date_latest = ''
+    date_latest_to_update = ''
+
+    def checkdate(self, title):
+        s = self.date_latest
+        match = re.search('\d{4}\d{2}\d{2}', s)
+        date1 = datetime.datetime.strptime(match.group(), '%Y%m%d').date()
+
+        match = re.search('\d{4}\d{2}\d{2}', title)
+        date2 = datetime.datetime.strptime(match.group(), '%Y%m%d').date()
+        if date1 < date2:
+            date_latest_to_update = date2.strftime("%Y%m%d")
+            return True
+        else:
+            return False
+
+
 
     def __init__(self, target=None, **kwargs):
+        #print('count=',count)
+        self.filename = './config.ini'
+        self.config = ConfigParser()
+        self.config.read(self.filename, encoding='UTF-8')
+        print('url:', self.config['item']['url'])
+        print('date_latest:', self.config['item']['date_latest'])
+        print('===========')
+        if target == '':
+            target = self.config['item']['url']
+        self.date_latest = self.config['item']['date_latest']
+        print('target=',target)
+
         if '&list=' not in target:
             # 单个视频
             self.play_url = target
@@ -76,6 +107,9 @@ class DownloadSpider(scrapy.Spider):
                 for video in videos:
                     video_title = video['title']
                     video_name = video_title + '.mp4'
+                    if not self.checkdate(video_title):
+                        continue
+
                     # 图片不存在时再下载
                     if os.path.exists(file_path + '/' + video_name) == False:
                         video_url = video['url']
@@ -107,5 +141,11 @@ class DownloadSpider(scrapy.Spider):
                             total_video_count2) + '个视频 -> ' + play_list_name + ' ' + video_title + ' -> 已下载')
                         video_count += 1
                         total_video_count += 1
+                        #if total_video_count > 1: #for debug
+                        #    continue
                 target_item_index += 1
             print('本次共下载' + (str)(total_target_item) + '个列表，' + (str)(total_video_count) + '个视频')
+            print('Write the latest date:',self.date_latest_to_update)
+            self.config.set('item', 'date_latest', self.date_latest_to_update)
+            with open('config.ini', 'w', encoding='utf-8') as file:
+                config.write(file) 
