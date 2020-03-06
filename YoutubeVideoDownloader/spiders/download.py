@@ -42,11 +42,23 @@ class DownloadSpider(scrapy.Spider):
         match = re.search('\d{4}\d{2}\d{2}', title)
         date2 = datetime.datetime.strptime(match.group(), '%Y%m%d').date()
         if date1 < date2:
-            date_latest_to_update = date2.strftime("%Y%m%d")
+            self.date_latest_to_update = date2.strftime("%Y%m%d")
             return True
         else:
             return False
 
+
+    def write_config(self):
+        filename = './config.ini'
+        self.config = ConfigParser()
+        self.config.read(filename, encoding='UTF-8')
+        print('date_latest:', self.config['item']['date_latest'])
+        self.date_latest = self.config['item']['date_latest']
+        print('Write the latest date:',self.date_latest_to_update)
+        self.config.set('item', 'date_latest', self.date_latest_to_update)
+        with open(filename, 'w', encoding='utf-8') as file:
+            self.config.write(file) 
+        return
 
 
     def __init__(self, target=None, **kwargs):
@@ -145,7 +157,6 @@ class DownloadSpider(scrapy.Spider):
                         #    continue
                 target_item_index += 1
             print('本次共下载' + (str)(total_target_item) + '个列表，' + (str)(total_video_count) + '个视频')
-            print('Write the latest date:',self.date_latest_to_update)
-            self.config.set('item', 'date_latest', self.date_latest_to_update)
-            with open('config.ini', 'w', encoding='utf-8') as file:
-                config.write(file) 
+
+            self.write_config()
+
