@@ -158,5 +158,5 @@ class DownloadSpider(scrapy.Spider):
                 target_item_index += 1
             print('本次共下载' + (str)(total_target_item) + '个列表，' + (str)(total_video_count) + '个视频')
 
-            self.write_config()
+            #self.write_config()
 
