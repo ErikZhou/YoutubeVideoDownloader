@@ -35,16 +35,19 @@ class DownloadSpider(scrapy.Spider):
     date_latest_to_update = ''
 
     def checkdate(self, title):
-        s = self.date_latest
-        match = re.search('\d{4}\d{2}\d{2}', s)
-        date1 = datetime.datetime.strptime(match.group(), '%Y%m%d').date()
-
-        match = re.search('\d{4}\d{2}\d{2}', title)
-        date2 = datetime.datetime.strptime(match.group(), '%Y%m%d').date()
-        if date1 < date2:
-            self.date_latest_to_update = date2.strftime("%Y%m%d")
-            return True
-        else:
+        try:
+            s = self.date_latest
+            match = re.search('\d{4}\d{2}\d{2}', s)
+            date1 = datetime.datetime.strptime(match.group(), '%Y%m%d').date()
+            match = re.search('\d{4}\d{2}\d{2}', title)
+            date2 = datetime.datetime.strptime(match.group(), '%Y%m%d').date()
+            if date1 < date2:
+                self.date_latest_to_update = date2.strftime("%Y%m%d")
+                return True
+            else:
+                return False
+        except:
+            print("An exception occurred")
             return False
 
 
@@ -118,7 +121,9 @@ class DownloadSpider(scrapy.Spider):
                 mkdir(file_path)
                 for video in videos:
                     video_title = video['title']
+                    video_title = video_title.replace("/", "-")
                     video_name = video_title + '.mp4'
+                    print('video_name:\n'+ video_name)
                     if not self.checkdate(video_title):
                         continue
 
