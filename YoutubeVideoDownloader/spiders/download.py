@@ -19,6 +19,8 @@ import re, datetime
 
 from YoutubeVideoDownloader.ProgressBar import ProgressBar
 from YoutubeVideoDownloader.util.CommonUtils import *
+from pytube import YouTube
+
 
 class DownloadSpider(scrapy.Spider):
     name = 'download'
@@ -34,9 +36,19 @@ class DownloadSpider(scrapy.Spider):
     date_latest = ''
     date_latest_to_update = ''
 
+    def download(self, url, file_name):
+        YouTube(url).streams.first().download(file_name)
+        return
+
+
     def checkdate(self, title):
         try:
             s = self.date_latest
+            print('1======================')
+            print(s)
+            if len(s) < 4:
+                return True # disable date check
+
             match = re.search('\d{4}\d{2}\d{2}', s)
             date1 = datetime.datetime.strptime(match.group(), '%Y%m%d').date()
             match = re.search('\d{4}\d{2}\d{2}', title)
@@ -113,7 +125,17 @@ class DownloadSpider(scrapy.Spider):
             total_video_count = 1
             for target_item in self.target:
                 data = json.loads(requests.get(self.parse_playlist_url + parse.quote(target_item)).content)
+
+                #print('======================')
+                #print(data)
+                #debug only
+                text_file = open("data.txt", "w")
+                n = text_file.write(str(data))
+                text_file.close()
+
                 videos = data['items']
+                #print('======================')
+                #print(videos)
                 video_count = 1
                 total_video_count2 = len(videos)
                 play_list_name = target_item.split('&list=')[1]
@@ -127,9 +149,13 @@ class DownloadSpider(scrapy.Spider):
                     if not self.checkdate(video_title):
                         continue
 
+                    #if total_video_count > 2: #for debug
+                    #    continue
+
                     # 图片不存在时再下载
                     if os.path.exists(file_path + '/' + video_name) == False:
                         video_url = video['url']
+                        print('url=======',video_url)
                         video_tmp = json.loads(requests.get(self.parse_video_url + parse.quote(video_url)).content)
                         if len(video_tmp) == 2:
                             print((str)(target_item_index) + '/' + (str)(total_target_item) + '个列表，第' + (str)(
@@ -145,7 +171,9 @@ class DownloadSpider(scrapy.Spider):
                                 print('正在下载第' + (str)(target_item_index) + '/' + (str)(total_target_item) + '个列表，第' + (
                                     str)(video_count) + '/' + (str)(
                                     total_video_count2) + '个视频 ' + play_list_name + ' ' + video_title)
-                                downloadFile(video_real_url, file_path, video_name)
+                                #downloadFile(video_real_url, file_path, video_name)
+                                self.download(video_url, file_path + '/' + video_name)
+                                print(video_real_url)
                                 print((str)(target_item_index) + '/' + (str)(total_target_item) + '个列表，第' + (str)(
                                     video_count) + '/' + (str)(
                                     total_video_count2) + '个视频 -> ' + play_list_name + ' ' + video_title + ' -> 下载完成')
@@ -158,8 +186,6 @@ class DownloadSpider(scrapy.Spider):
                             total_video_count2) + '个视频 -> ' + play_list_name + ' ' + video_title + ' -> 已下载')
                         video_count += 1
                         total_video_count += 1
-                        #if total_video_count > 1: #for debug
-                        #    continue
                 target_item_index += 1
             print('本次共下载' + (str)(total_target_item) + '个列表，' + (str)(total_video_count) + '个视频')
 
