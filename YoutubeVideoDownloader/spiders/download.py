@@ -41,6 +41,18 @@ class DownloadSpider(scrapy.Spider):
         return
 
 
+    def getindex(self, title):
+        try:
+            match = re.search('\d{4}\d{2}\d{2}', title)
+            date = datetime.datetime.strptime(match.group(), '%Y%m%d').date()
+            datestr = date.strftime("%Y%m%d")
+            index = title[title.find(datestr)+9:-2]
+            return index + '-'
+        except:
+            print("An exception occurred")
+            return ''
+
+
     def checkdate(self, title):
         try:
             s = self.date_latest
@@ -83,7 +95,6 @@ class DownloadSpider(scrapy.Spider):
         self.config.read(self.filename, encoding='UTF-8')
         print('url:', self.config['item']['url'])
         print('date_latest:', self.config['item']['date_latest'])
-        print('===========')
         if target == '':
             target = self.config['item']['url']
         self.date_latest = self.config['item']['date_latest']
@@ -95,6 +106,16 @@ class DownloadSpider(scrapy.Spider):
         else:
             # 播放列表，多个以空格切分
             self.target = target.split(' ')
+
+
+    def safe_download(self, video_real_url, video_url, file_path, new_name):
+        downloadFile(video_real_url, file_path, new_name)
+        newfile = file_path + '/' + new_name
+        if os.path.getsize(newfile) < 10 :
+            os.remove(newfile)
+            self.download(video_url, newfile)
+        print('===========newfile')
+        print(newfile)
 
 
     def parse(self, response):
@@ -153,7 +174,9 @@ class DownloadSpider(scrapy.Spider):
                     #    continue
 
                     # 图片不存在时再下载
-                    if os.path.exists(file_path + '/' + video_name) == False:
+                    new_name = self.getindex(video_title) + video_name
+                    new_file_path = file_path + '/' + new_name
+                    if (os.path.exists(new_file_path) == False) or (os.path.getsize(new_file_path) < 10) :
                         video_url = video['url']
                         print('url=======',video_url)
                         video_tmp = json.loads(requests.get(self.parse_video_url + parse.quote(video_url)).content)
@@ -171,8 +194,11 @@ class DownloadSpider(scrapy.Spider):
                                 print('正在下载第' + (str)(target_item_index) + '/' + (str)(total_target_item) + '个列表，第' + (
                                     str)(video_count) + '/' + (str)(
                                     total_video_count2) + '个视频 ' + play_list_name + ' ' + video_title)
-                                #downloadFile(video_real_url, file_path, video_name)
-                                self.download(video_url, file_path + '/' + video_name)
+                                #new_name = self.getindex(video_title) + video_name
+                                #downloadFile(video_real_url, file_path, new_name)
+                                #self.download(video_url, file_path)
+                                self.safe_download(video_real_url, video_url, file_path, new_name)
+
                                 print(video_real_url)
                                 print((str)(target_item_index) + '/' + (str)(total_target_item) + '个列表，第' + (str)(
                                     video_count) + '/' + (str)(

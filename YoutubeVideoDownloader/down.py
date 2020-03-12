@@ -11,11 +11,13 @@ import sys
 def main():
     url = sys.argv[1]
     print(url)
+    YouTube(url).streams.first().download()
     #path ='./videos/1.mp4'
+    
     #YouTube(url).streams.first().download(path)
-    pl = YouTube(url)
-    for video in pl:
-        video.streams.get_highest_resolution().download()
+    #pl = YouTube(url)
+    #for video in pl:
+    #    video.streams.get_highest_resolution().download()
     #pl.download_all()
     # or if you want to download in a specific directory
     #pl.download_all('./videos/')
