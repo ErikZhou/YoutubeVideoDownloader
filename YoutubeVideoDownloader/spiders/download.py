@@ -35,7 +35,8 @@ class DownloadSpider(scrapy.Spider):
     play_url = ''
     date_latest = ''
     date_latest_to_update = ''
-
+    key = ''
+    value = 0
     def download(self, url, file_name):
         YouTube(url).streams.first().download(file_name)
         return
@@ -47,6 +48,11 @@ class DownloadSpider(scrapy.Spider):
             date = datetime.datetime.strptime(match.group(), '%Y%m%d').date()
             datestr = date.strftime("%Y%m%d")
             index = title[title.find(datestr)+9:-2]
+            print('index======================')
+            print(index)
+            if self.value < int(index) :
+                self.value = int(index)  # save index
+
             return index + '-'
         except:
             print("An exception occurred")
@@ -56,8 +62,6 @@ class DownloadSpider(scrapy.Spider):
     def checkdate(self, title):
         try:
             s = self.date_latest
-            print('1======================')
-            print(s)
             if len(s) < 4:
                 return True # disable date check
 
@@ -88,6 +92,20 @@ class DownloadSpider(scrapy.Spider):
         return
 
 
+    def write_index(self, key, value):
+        print('key=',key)
+        print('value=',value)
+        filename = './config.ini'
+        config = ConfigParser()
+        config.read(filename, encoding='UTF-8')
+        #print('key from config:', self.config['item'][key])
+        #config.add_section('keys')
+        config['keys'][key] = str(value)
+        with open(filename, 'w', encoding='utf-8') as file:
+            config.write(file) 
+        return
+
+
     def __init__(self, target=None, **kwargs):
         #print('count=',count)
         self.filename = './config.ini'
@@ -99,6 +117,7 @@ class DownloadSpider(scrapy.Spider):
             target = self.config['item']['url']
         self.date_latest = self.config['item']['date_latest']
         print('target=',target)
+        self.value = 0
 
         if '&list=' not in target:
             # 单个视频
@@ -161,6 +180,9 @@ class DownloadSpider(scrapy.Spider):
                 total_video_count2 = len(videos)
                 play_list_name = target_item.split('&list=')[1]
                 file_path = self.path_domain + '/playlist/' + play_list_name
+
+                self.key = play_list_name # save key
+
                 mkdir(file_path)
                 for video in videos:
                     video_title = video['title']
@@ -216,4 +238,5 @@ class DownloadSpider(scrapy.Spider):
             print('本次共下载' + (str)(total_target_item) + '个列表，' + (str)(total_video_count) + '个视频')
 
             #self.write_config()
+            self.write_index(self.key, self.value)
 
