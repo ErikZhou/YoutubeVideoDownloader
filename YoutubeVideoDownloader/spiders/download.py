@@ -37,6 +37,8 @@ class DownloadSpider(scrapy.Spider):
     date_latest_to_update = ''
     key = ''
     value = 0
+    value_last = 0
+    section =''
     def download(self, url, file_name):
         YouTube(url).streams.first().download(file_name)
         return
@@ -48,15 +50,24 @@ class DownloadSpider(scrapy.Spider):
             date = datetime.datetime.strptime(match.group(), '%Y%m%d').date()
             datestr = date.strftime("%Y%m%d")
             index = title[title.find(datestr)+9:-2]
-            print('index======================')
-            print(index)
+            print('======================index=',index)
             if self.value < int(index) :
                 self.value = int(index)  # save index
 
-            return index + '-'
+            return index
         except:
             print("An exception occurred")
             return ''
+
+
+    def checkindex(self, title):
+        ret = self.getindex(title)
+        if ret == '' :
+            ret = 0
+        if int(self.value_last) < int(ret):
+            return True 
+        else:
+            return False 
 
 
     def checkdate(self, title):
@@ -100,7 +111,7 @@ class DownloadSpider(scrapy.Spider):
         config.read(filename, encoding='UTF-8')
         #print('key from config:', self.config['item'][key])
         #config.add_section('keys')
-        config['keys'][key] = str(value)
+        config[self.section][key] = str(value)
         with open(filename, 'w', encoding='utf-8') as file:
             config.write(file) 
         return
@@ -111,19 +122,18 @@ class DownloadSpider(scrapy.Spider):
         self.filename = './config.ini'
         self.config = ConfigParser()
         self.config.read(self.filename, encoding='UTF-8')
-        print('url:', self.config['item']['url'])
-        print('date_latest:', self.config['item']['date_latest'])
-        if target == '':
-            target = self.config['item']['url']
-        self.date_latest = self.config['item']['date_latest']
+        #print('url:', self.config['item']['url'])
+        #print('date_latest:', self.config['item']['date_latest'])
+        #if target == '':
+        #    target = self.config['item']['url']
+        #self.date_latest = int(self.config['item']['date_latest'])
+        #self.value_last = self.config['keys']['uughls6s95lrbwodlzuch4qw']
         print('target=',target)
         self.value = 0
 
-        if '&list=' not in target:
-            # 单个视频
+        if '&list=' not in target: # single 
             self.play_url = target
-        else:
-            # 播放列表，多个以空格切分
+        else: #multi
             self.target = target.split(' ')
 
 
@@ -138,6 +148,25 @@ class DownloadSpider(scrapy.Spider):
 
 
     def parse(self, response):
+        for section in self.config._sections:
+            print(section)
+            #print(config._sections[section])
+            for key, val in self.config.items(section):
+                print(key,'=', val)
+                if key == 'value_last' :
+                    self.value_last = val
+                    self.section = section
+                if key == 'url' :
+                    target = val
+                    if '&list=' not in target: # single 
+                        self.play_url = target
+                    else: #multi
+                        self.target = target.split(' ')
+                    self.value = 0 
+                    self._parse(response)
+
+
+    def _parse(self, response):
 
         if self.target == []:
             # 下载单个视频
@@ -189,7 +218,8 @@ class DownloadSpider(scrapy.Spider):
                     video_title = video_title.replace("/", "-")
                     video_name = video_title + '.mp4'
                     print('video_name:\n'+ video_name)
-                    if not self.checkdate(video_title):
+                    #if not self.checkdate(video_title):
+                    if not self.checkindex(video_title):
                         continue
 
                     #if total_video_count > 2: #for debug
@@ -238,5 +268,5 @@ class DownloadSpider(scrapy.Spider):
             print('本次共下载' + (str)(total_target_item) + '个列表，' + (str)(total_video_count) + '个视频')
 
             #self.write_config()
-            self.write_index(self.key, self.value)
+            self.write_index('value_last', self.value)
 
