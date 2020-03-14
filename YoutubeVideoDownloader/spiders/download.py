@@ -33,8 +33,8 @@ class DownloadSpider(scrapy.Spider):
     # 播放列表
     target = []
     play_url = ''
-    date_latest = ''
-    date_latest_to_update = ''
+    date_last = ''
+    date_update = ''
     key = ''
     value = 0
     value_last = 0
@@ -72,7 +72,7 @@ class DownloadSpider(scrapy.Spider):
 
     def checkdate(self, title):
         try:
-            s = self.date_latest
+            s = self.date_last
             if len(s) < 4:
                 return True # disable date check
 
@@ -80,27 +80,16 @@ class DownloadSpider(scrapy.Spider):
             date1 = datetime.datetime.strptime(match.group(), '%Y%m%d').date()
             match = re.search('\d{4}\d{2}\d{2}', title)
             date2 = datetime.datetime.strptime(match.group(), '%Y%m%d').date()
+            print('date===',date2)
             if date1 < date2:
-                self.date_latest_to_update = date2.strftime("%Y%m%d")
+                self.date_update = date2.strftime("%Y%m%d")
+                print('date_upate============',self.date_update)
                 return True
             else:
                 return False
         except:
             print("An exception occurred")
             return False
-
-
-    def write_config(self):
-        filename = './config.ini'
-        self.config = ConfigParser()
-        self.config.read(filename, encoding='UTF-8')
-        print('date_latest:', self.config['item']['date_latest'])
-        self.date_latest = self.config['item']['date_latest']
-        print('Write the latest date:',self.date_latest_to_update)
-        self.config.set('item', 'date_latest', self.date_latest_to_update)
-        with open(filename, 'w', encoding='utf-8') as file:
-            self.config.write(file) 
-        return
 
 
     def write_index(self, key, value):
@@ -155,6 +144,9 @@ class DownloadSpider(scrapy.Spider):
                 print(key,'=', val)
                 if key == 'value_last' :
                     self.value_last = val
+                    self.section = section
+                if key == 'date_last' :
+                    self.date_last = val
                     self.section = section
                 if key == 'url' :
                     target = val
@@ -218,9 +210,13 @@ class DownloadSpider(scrapy.Spider):
                     video_title = video_title.replace("/", "-")
                     video_name = video_title + '.mp4'
                     print('video_name:\n'+ video_name)
-                    #if not self.checkdate(video_title):
-                    if not self.checkindex(video_title):
-                        continue
+                    if int(self.value_last) < 1 :
+                        if not self.checkdate(video_title):
+                            continue
+                    else:
+                        if not self.checkindex(video_title):
+                            continue
+
 
                     #if total_video_count > 2: #for debug
                     #    continue
@@ -267,6 +263,9 @@ class DownloadSpider(scrapy.Spider):
                 target_item_index += 1
             print('本次共下载' + (str)(total_target_item) + '个列表，' + (str)(total_video_count) + '个视频')
 
-            #self.write_config()
-            self.write_index('value_last', self.value)
+            if int(self.value_last) < 1 :
+                print('date_update=', self.date_update)
+                self.write_index('date_last', self.date_update)
+            else:
+                self.write_index('value_last', self.value)
 
