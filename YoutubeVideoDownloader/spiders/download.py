@@ -38,6 +38,7 @@ class DownloadSpider(scrapy.Spider):
     key = ''
     value = 0
     value_last = 0
+    date_dot = 0
     section =''
     def download(self, url, file_name):
         YouTube(url).streams.first().download(file_name)
@@ -46,7 +47,11 @@ class DownloadSpider(scrapy.Spider):
 
     def getindex(self, title):
         try:
-            match = re.search('\d{4}\d{2}\d{2}', title)
+            match = ''
+            if self.date_dot == '1' :
+                match = re.search('\d{4}.\d{2}.\d{2}', title)
+            else: 
+                match = re.search('\d{4}\d{2}\d{2}', title)
             date = datetime.datetime.strptime(match.group(), '%Y%m%d').date()
             datestr = date.strftime("%Y%m%d")
             index = title[title.find(datestr)+9:-2]
@@ -70,6 +75,28 @@ class DownloadSpider(scrapy.Spider):
             return False 
 
 
+    def getdate(self, title):
+        try:
+            if self.date_dot == '1' :
+                match = re.search('\d{4}.\d{2}.\d{2}', title)
+                date2 = datetime.datetime.strptime(match.group(), '%Y.%m.%d').date()
+            else: 
+                match = re.search('\d{4}\d{2}\d{2}', title)
+                date2 = datetime.datetime.strptime(match.group(), '%Y%m%d').date()
+            date_title = date2.strftime("%Y%m%d")
+            return date_title
+        except AttributeError as error:
+            print('checkdate AttributeError:',error)
+            return ''
+        except Exception as exception:
+            print('checkdate Exception:', exception)
+            return ''
+        except:
+            print("Oops!",sys.exc_info()[0],"occured.")
+            print("checkdate An exception occurred")
+            return ''
+
+
     def checkdate(self, title):
         try:
             s = self.date_last
@@ -78,17 +105,28 @@ class DownloadSpider(scrapy.Spider):
 
             match = re.search('\d{4}\d{2}\d{2}', s)
             date1 = datetime.datetime.strptime(match.group(), '%Y%m%d').date()
-            match = re.search('\d{4}\d{2}\d{2}', title)
-            date2 = datetime.datetime.strptime(match.group(), '%Y%m%d').date()
-            print('date===',date2)
+            if self.date_dot == '1' :
+                match = re.search('\d{4}.\d{2}.\d{2}', title)
+                date2 = datetime.datetime.strptime(match.group(), '%Y.%m.%d').date()
+            else: 
+                match = re.search('\d{4}\d{2}\d{2}', title)
+                date2 = datetime.datetime.strptime(match.group(), '%Y%m%d').date()
+            #print('match:\n')
+            #print(match)
+            #print('date===',date2)
             if date1 < date2:
                 self.date_update = date2.strftime("%Y%m%d")
-                print('date_upate============',self.date_update)
+                #print('date_upate============',self.date_update)
                 return True
             else:
                 return False
+        except AttributeError as error:
+            print('checkdate AttributeError:',error)
+        except Exception as exception:
+            print('checkdate Exception:', exception)
         except:
-            print("An exception occurred")
+            print("Oops!",sys.exc_info()[0],"occured.")
+            print("checkdate An exception occurred")
             return False
 
 
@@ -145,6 +183,8 @@ class DownloadSpider(scrapy.Spider):
                 if key == 'value_last' :
                     self.value_last = val
                     self.section = section
+                if key == 'date_dot' :
+                    self.date_dot = val
                 if key == 'date_last' :
                     self.date_last = val
                     self.date_update = val
@@ -211,6 +251,7 @@ class DownloadSpider(scrapy.Spider):
                     video_title = video_title.replace("/", "-")
                     video_name = video_title + '.mp4'
                     print('video_name:\n'+ video_name)
+                    print('value last:'+ self.value_last)
                     if int(self.value_last) < 1 :
                         if not self.checkdate(video_title):
                             continue
@@ -223,7 +264,11 @@ class DownloadSpider(scrapy.Spider):
                     #    continue
 
                     # 图片不存在时再下载
-                    new_name = self.getindex(video_title) + video_name
+                    if self.date_dot == '1' :
+                        new_name = self.getdate(video_title) + video_name
+                    else:
+                        new_name = self.getindex(video_title) + video_name
+
                     new_file_path = file_path + '/' + new_name
                     if (os.path.exists(new_file_path) == False) or (os.path.getsize(new_file_path) < 10) :
                         video_url = video['url']
