@@ -1,0 +1,20 @@
+1239868486832107521 2020-03-17 10:57:37 UTC <CStar_OW> 2. I have protections against TOCTOU that I won’t discuss 3. Nope, it doesn’t allow running binaries
+1239865737004474369 2020-03-17 10:46:41 UTC <CStar_OW> 1. iOS 10 and lower use the same version of ldid as the current build of ldid that I distribute 2. Pirates can more easily break the DRM if only those 2 are hashed by editing the Mach header if I don’t hash the entire thing 3. The modification would be converting it to PHP...
+1239859016919998464 2020-03-17 10:19:59 UTC <CStar_OW> The binary would be pre-signed if I could run ldid on my server. AGPL is why I can’t distribute pre-signed binaries, and why ldid needs to run on the user’s device
+1239856671343562752 2020-03-17 10:10:40 UTC <CStar_OW> well that's a problem with ldid being AGPL then. Otherwise I'd run it on my server and not require the user's device to run ldid at all
+1239856413569998849 2020-03-17 10:09:39 UTC <CStar_OW> 1. I can't because that'd break compatibility with iOS 10 and lower 2. Because my DRM hashes the entire binary, which includes the code signature as well 3. I'd prefer to run ldid on my server to avoid all this, but ldid's AGPL license prevents that
+1239852844536049665 2020-03-17 09:55:28 UTC <CStar_OW> my ldid (the one on both Chimera & Sileo for checkrain repos) is the same one saurik uses on iOS 10 and lower jailbreaks  and yes, the DRM on my paid tweaks requires that the ldid on the user's device make a binary that matches the ldid on my build system
+1239825111374430209 2020-03-17 08:05:16 UTC <CStar_OW> :D https://streamable.com/55dfx 
+1239822175512616960 2020-03-17 07:53:36 UTC <CStar_OW> you're playing overwatch and you see this in the killfeed. What do you do? pic.twitter.com/SWFtNgj199
+1239815699792420864 2020-03-17 07:27:52 UTC <CStar_OW> being behind a screen/VR headset may be the key here
+1239802995123949568 2020-03-17 06:37:23 UTC <CStar_OW> though... is there any such thing as crossdressing if I'm non-binary 🤔
+1239802765791989767 2020-03-17 06:36:28 UTC <CStar_OW> this tbh; I was so scared when I was going out crossdressing on halloween, even though I paid $300 for the costume in total because I really wanted it to get somewhere close to passing 😤  so glad I went out though, and especially glad I put on the girl wig
+1239801631421673473 2020-03-17 06:31:57 UTC <CStar_OW> JOIN ME IN VR CHAT NEXT WEEK (don't even need a headset)  WE DOIN VOICE TRAINING
+1239800275453403136 2020-03-17 06:26:34 UTC <CStar_OW> meanwhile on VR Chat there's a ton of "cis guys" that learn how to train their voice to match their anime girl character...  (VR Chat is where I'm planning to train my voice since lockdown)
+1239798096436940800 2020-03-17 06:17:55 UTC <CStar_OW> Wonder what I should do next week since I'm probably not going home for Spring Break due to lockdown in San Francisco and I'll likely be alone in my dorm all break
+1239784385664053251 2020-03-17 05:23:26 UTC <CStar_OW> iOS 9
+1239783408630259713 2020-03-17 05:19:33 UTC <CStar_OW> this tho pic.twitter.com/g6Dhs4Ds0S
+1239782418262851584 2020-03-17 05:15:37 UTC <CStar_OW> I guess we're renaming libhooker to Toilet Paper then
+1239782076749996032 2020-03-17 05:14:15 UTC <CStar_OW> that brings back memories
+1239729052266590208 2020-03-17 01:43:33 UTC <CStar_OW>  pic.twitter.com/BZx5ophWWO
+1239728950684745728 2020-03-17 01:43:09 UTC <CStar_OW> keep lying there pic.twitter.com/x4f6amSvcz

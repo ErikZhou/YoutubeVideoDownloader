@@ -147,6 +147,7 @@ class DownloadSpider(scrapy.Spider):
                     self.section = section
                 if key == 'date_last' :
                     self.date_last = val
+                    self.date_update = val
                     self.section = section
                 if key == 'url' :
                     target = val
