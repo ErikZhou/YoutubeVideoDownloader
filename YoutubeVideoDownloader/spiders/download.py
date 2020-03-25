@@ -20,6 +20,9 @@ import re, datetime
 from YoutubeVideoDownloader.ProgressBar import ProgressBar
 from YoutubeVideoDownloader.util.CommonUtils import *
 from pytube import YouTube
+#import common_tool
+import shutil
+
 
 
 class DownloadSpider(scrapy.Spider):
@@ -149,12 +152,6 @@ class DownloadSpider(scrapy.Spider):
         self.filename = './config.ini'
         self.config = ConfigParser()
         self.config.read(self.filename, encoding='UTF-8')
-        #print('url:', self.config['item']['url'])
-        #print('date_latest:', self.config['item']['date_latest'])
-        #if target == '':
-        #    target = self.config['item']['url']
-        #self.date_latest = int(self.config['item']['date_latest'])
-        #self.value_last = self.config['keys']['uughls6s95lrbwodlzuch4qw']
         print('target=',target)
         self.value = 0
 
@@ -172,6 +169,31 @@ class DownloadSpider(scrapy.Spider):
             self.download(video_url, newfile)
         print('===========newfile')
         print(newfile)
+        
+        
+    '''
+    Check if a Directory is empty : Method 1
+    '''
+    def isEmpty(self, path): 
+        if not os.path.isdir(path):
+            return False
+        if len(os.listdir(path)) == 0:
+            print("Directory is empty")
+            return True
+        else:
+            print("Directory is not empty")
+            return False
+        
+    
+    def remove(self, path):
+        """ param <path> could either be relative or absolute. """
+        if os.path.isfile(path) or os.path.islink(path):
+            print('file was deleted:', path)
+            os.remove(path)  # remove the file
+        elif os.path.isdir(path):
+            shutil.rmtree(path)  # remove dir and all contains
+        else:
+            raise ValueError("file {} is not a file or dir.".format(path))
 
 
     def parse(self, response):
@@ -225,6 +247,7 @@ class DownloadSpider(scrapy.Spider):
             target_item_index = 1
             total_target_item = len(self.target)
             total_video_count = 1
+            fullpath = ''
             for target_item in self.target:
                 data = json.loads(requests.get(self.parse_playlist_url + parse.quote(target_item)).content)
 
@@ -242,6 +265,7 @@ class DownloadSpider(scrapy.Spider):
                 total_video_count2 = len(videos)
                 play_list_name = target_item.split('&list=')[1]
                 file_path = self.path_domain + '/playlist/' + play_list_name
+                fullpath = file_path
 
                 self.key = play_list_name # save key
 
@@ -308,6 +332,11 @@ class DownloadSpider(scrapy.Spider):
                         total_video_count += 1
                 target_item_index += 1
             print('本次共下载' + (str)(total_target_item) + '个列表，' + (str)(total_video_count) + '个视频')
+
+            # delete empth folder
+            is_empty = self.isEmpty(fullpath)
+            if is_empty:
+                self.remove(fullpath)
 
             if int(self.value_last) < 1 :
                 print('date_update=', self.date_update)
