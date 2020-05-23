@@ -22,7 +22,7 @@ from YoutubeVideoDownloader.util.CommonUtils import *
 from pytube import YouTube
 #import common_tool
 import shutil
-
+#import get_date
 
 
 class DownloadSpider(scrapy.Spider):
@@ -162,6 +162,8 @@ class DownloadSpider(scrapy.Spider):
 
 
     def safe_download(self, video_real_url, video_url, file_path, new_name):
+        #dt = get_date.get_date(video_real_url)
+        #print(dt)
         downloadFile(video_real_url, file_path, new_name)
         newfile = file_path + '/' + new_name
         if os.path.getsize(newfile) < 10 :
