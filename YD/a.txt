@@ -1,0 +1,47 @@
+[ Thu Jul 30 12:22:13 UTC 2020 ] : scd.py is down, start it!
+len=4
+https://www.youtube.com/watch?v=349AD1Z_-9A
+len=4
+https://www.youtube.com/watch?v=9JKyg3mVNKI
+../videos/playlist/PL2DywIam67jsFoEhIvVhB0HukSP8IAIt0/
+False
+target= 
+count:79
+videos/playlist/UUghLs6s95LrBWOdlZUCH4qw 创建成功
+key= value_last
+value= 2645
+key= value_last
+value= 2647
+video======= 捅到习近平的G点了，驻日美军司令宣布美军将协助日本防御钓鱼岛（20200729第2647期）
+new_name======= 2647捅到习近平的G点了，驻日美军司令宣布美军将协助日本防御钓鱼岛（20200729第2647期）.mp4
+video======= 捅到习近平的G点了，驻日美军司令宣布美军将协助日本防御钓鱼岛（20200729第2647期）
+new_name======= 2647_捅到习近平的G点了，驻日美军司令宣布美军将协助日本防御钓鱼岛（20200729第2647期）.mp4
+python3 /home/rslsync/mac/pd/down.py https://www.youtube.com/watch?v=349AD1Z_-9A videos/playlist/UUghLs6s95LrBWOdlZUCH4qw 2647_捅到习近平的G点了，驻日美军司令宣布美军将协助日本防御钓鱼岛（20200729第2647期）.mp4
+video======= 余茂春被母校除名（20200729第2646期）
+new_name======= 2646余茂春被母校除名（20200729第2646期）.mp4
+video======= 余茂春被母校除名（20200729第2646期）
+new_name======= 2646_余茂春被母校除名（20200729第2646期）.mp4
+python3 /home/rslsync/mac/pd/down.py https://www.youtube.com/watch?v=9JKyg3mVNKI videos/playlist/UUghLs6s95LrBWOdlZUCH4qw 2646_余茂春被母校除名（20200729第2646期）.mp4
+本次共下载1个列表，1个视频
+Directory is empty
+key= value_last
+value= 2647
+count:200
+videos/playlist/PL2DywIam67jsFoEhIvVhB0HukSP8IAIt0 创建成功
+key= value_last
+value= 794
+video_tile:None
+getindex An exception occurred title:生死一線：中共硬上人大版《香港國安法23條》，川普強硬回懟；北京異象，真實的「至暗時刻」（文昭談古論今2020521第755期）
+video_tile:None
+video_tile:None
+getindex An exception occurred title:17万人空前大会，习近平决战三月份！中共蕴酿出逃计划，对习意味着什么（2020024第705期）
+getindex An exception occurred title:文昭、秋旻對唱：約在春天相見（We Promise to Meet in the Spring - English & French Subtitles)
+getindex An exception occurred title:文昭、明居正台北答網友尖銳提問：餓死不造反的中國人何時反抗？（20200121)
+getindex An exception occurred title:文昭台北演講：歷史性大選後，什麼力量能讓台灣走出亡國感（20200112）
+getindex An exception occurred title:優化分裂完勝統一，後起之秀趕超中國？（20191225）
+video_tile:None
+getindex An exception occurred title:Alibaba and Tencent refused to deliver customers' data to government
+本次共下载1个列表，1个视频
+Directory is empty
+key= value_last
+value= 794
